@@ -117,38 +117,33 @@ def parse_input(user_input):
 
 @input_error
 def add_contact(args, book):
-    if len(args) < 2:
-        return 'Enter a name and phone number'
-
-    name, phone = args
-
-    book[name] = phone
-    return "Contact added!"
+    name, phone, *_ = args
+    record = book.find(name)
+    message = "Contact updated."
+    if record is None:
+        record = Record(name)
+        book.add_record(record)
+        message = "Contact added."
+    if phone:
+        record.add_phone(phone)
+    return message
 
 @input_error
 def change_contact(args, book):
-    if len(args) < 2:
-        return 'Enter a name and phone number'
-
-    name, phone= args
-
-    if name in book:
-        book[name] = phone
-        return 'Contact updated.'
-    else:
-        return f'Not found contact {name}'
+    name, old_phone, new_phone = args
+    record = book.find(name)
+    if not record:
+        return f"No contact found."
+    record.edit_phone(old_phone, new_phone)
+    return "Phone number updated."
     
 @input_error
 def show_phone(args, book):
-    if len(args) > 1:
-        return 'Enter contact name'
-    
     name = args[0]
-
-    if name in book:
-        return book[name] 
-    else:
-        return f'Not found contact {name}'
+    record = book.find(name)
+    if not record:
+        return f"No contact found."
+    return f"Phones for {name}: {', '.join(phone.value for phone in record.phones)}"
 
 @input_error
 def show_all(book):
@@ -161,9 +156,9 @@ def add_birthday(args, book):
     name, birthday = args
     record = book.find(name)
     if not record:
-        return f"Not found."
+        return f"No contact found."
     record.add_birthday(birthday)
-    return "Added."
+    return "Birthday added." 
 
 @input_error
 def show_birthday(args, book):
@@ -186,8 +181,7 @@ def birthdays(args, book):
 def main():
     book = AddressBook()
     print("Welcome to the assistant bot!")
-
-
+    
     while True:
         user_input = input("Enter a command: ")
         command, *args = parse_input(user_input)
