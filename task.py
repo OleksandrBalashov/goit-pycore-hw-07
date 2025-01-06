@@ -73,11 +73,11 @@ class AddressBook(UserDict):
     def delete(self, name):
         del self.data[name]
 
-    def get_upcoming_birthdays(users):
+    def get_upcoming_birthdays(self):
         greetings_users = []
         today = datetime.today().date()
-        for user in users:
-            birthday = datetime.strptime(user["birthday"], "%Y.%m.%d").date()
+
+        for name, birthday in self.data.values():
             birthday_this_year = birthday.replace(year = today.year)
 
             if (birthday_this_year < today):
@@ -92,7 +92,7 @@ class AddressBook(UserDict):
                     congratulation_date += timedelta(days=(7 - congratulation_date.weekday()))
              
                 greetings_users.append({
-                    "name": user["name"],
+                    "name": name.value,
                     "congratulation_date": congratulation_date.strftime('%Y.%m.%d'),
                 })    
         return greetings_users
