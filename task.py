@@ -77,8 +77,8 @@ class AddressBook(UserDict):
         greetings_users = []
         today = datetime.today().date()
 
-        for name, birthday in self.data.values():
-            birthday_this_year = birthday.replace(year = today.year)
+        for record in self.data.items():
+            birthday_this_year = record.birthday.replace(year = today.year)
 
             if (birthday_this_year < today):
                 birthday_this_year = birthday_this_year.replace(year = today.year + 1)
@@ -92,7 +92,7 @@ class AddressBook(UserDict):
                     congratulation_date += timedelta(days=(7 - congratulation_date.weekday()))
              
                 greetings_users.append({
-                    "name": name.value,
+                    "name": record.name.value,
                     "congratulation_date": congratulation_date.strftime('%Y.%m.%d'),
                 })    
         return greetings_users
